@@ -1,29 +1,16 @@
+import base64
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import plotly as py
-import plotly_express as px
+import plotly.express as px
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 import folium
 from folium import plugins
 
 
-from plotly.offline import iplot
-import os
-import base64
-
-
-
-# from plotly.offline import init_notebook_mode, iplot
-import os
-import base64
-
-# from plotly.offline import init_notebook_mode, iplot
-import os
-import base64
-
-df = pd.read_csv('FIFA DataSet/Data/FIFA World Cup Penalty Shootouts/WorldCupShootouts.csv')
+df = pd.read_csv('Dataset/WorldCupShootouts.csv')
 
 
 def show_shots(df, x, y, size, size_max, hover_name, hover_data, color, title):
