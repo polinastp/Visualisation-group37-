@@ -21,28 +21,22 @@ def generate_description_card():
 
 def generate_control_card():
     """
-
     :return: A Div containing controls for graphs.
     """
     return html.Div(
         id="control-card",
         children=[
-            html.Label("Color scatterplot 1"),
+            html.Label("Choose visualisation:"),
             dcc.Dropdown(
-                id="select-color-scatter-1",
-                options=[{"label": i, "value": i} for i in color_list1],
-                value=color_list1[0],
-            ),
-            html.Br(),
-            html.Label("Color scatterplot 2"),
-            dcc.Dropdown(
-                id="select-color-scatter-2",
-                options=[{"label": i, "value": i} for i in color_list2],
-                value=color_list2[0],
+                id='menu-dropdown',
+                options=[
+                    {'label': 'Penalty Shootouts', 'value': 'penalty'},
+                    {'label': 'Teams Formation', 'value': 'formation'}
+                ],
+                value='penalty'  # Set a default value if needed
             ),
         ], style={"textAlign": "float-left"}
     )
-
 
 def make_menu_layout():
     return [generate_description_card(), generate_control_card()]
