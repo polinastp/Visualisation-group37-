@@ -43,7 +43,7 @@ df['assists']=(df['assists']-df['assists'].min())/(df['assists'].max()-df['assis
 app = dash.Dash(__name__)
 
 # creating categories for the radar graph 
-categories = ['shots', 'goals', 'tackles', 'blocks', 'touches', 'received passes', 'passes', 'assists']
+categories = ['shots', 'goals', 'tackles', 'blocks', 'touches', 'passes_received', 'passes', 'assists']
 
 # creating figure 
 fig = go.Figure()
@@ -137,6 +137,9 @@ def update_radar_chart(selected_teamA, selected_teamB):
     [Input('teamA_dd', 'value'), Input('teamB_dd', 'value'), Input('attribute_checklist', 'value')]
 )
 def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
+    if not selected_attributes:
+        return make_subplots(rows=1, cols=1)
+
     teamA_data = df[df['team'] == selected_teamA]
     teamB_data = df[df['team'] == selected_teamB]
 
