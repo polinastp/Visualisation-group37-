@@ -58,15 +58,15 @@ fig.update_layout(
 
 app.layout = html.Div([
     dcc.Graph(id='spider', figure=fig),
-    html.Label('Team A:'),
+    html.Label('Team A:', style={'font-weight': 'bold'}),
     dcc.Dropdown(id='teamA_dd',
                  options=[{'label': team, 'value': team} for team in df['team'].unique()],
                  ),
-    html.Label('Team B:'),
+    html.Label('Team B:', style={'font-weight': 'bold'}),
     dcc.Dropdown(id='teamB_dd',
                  options=[{'label': team, 'value': team} for team in df['team'].unique()],
                  ),
-    html.Label('Select attributes for violin plots:'),
+    html.Label('Select attributes for violin plots:', style={'font-weight': 'bold'}),
     dcc.Checklist(
         id='attribute_checklist',
         options=[{'label': attr, 'value': attr} for attr in categories],
