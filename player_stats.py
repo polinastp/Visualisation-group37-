@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import os
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
+import plotly.express as px
 
 # read csv files into dataframes
 df1 = pd.read_csv('Dataset/player_shooting.csv')
@@ -55,7 +56,7 @@ fig.update_layout(
 )
 
 app.layout = html.Div([
-    dcc.Graph(id="spider", figure=fig),
+    dcc.Graph(id='spider', figure=fig),
     html.Label('Team A:'),
     dcc.Dropdown(id='teamA_dd',
                  options=[{'label': team, 'value': team} for team in df['team'].unique()],
@@ -63,12 +64,20 @@ app.layout = html.Div([
     html.Label('Team B:'),
     dcc.Dropdown(id='teamB_dd',
                  options=[{'label': team, 'value': team} for team in df['team'].unique()],
-                 )
+                 ),
+    html.Label('Select attributes for violin plots:'),
+    dcc.Checklist(
+        id='attribute_checklist',
+        options=[{'Label': attr, 'value': attr} for attr in categories],
+        value=categories
+    ),
+    dcc.Graph(id='violin_plot')
 ])
 
+# Callback function for spider plots
 @app.callback(
-    Output("spider", "figure"),
-    [Input("teamA_dd", "value"), Input("teamB_dd", "value")]
+    Output('spider', 'figure'),
+    [Input('teamA_dd', 'value'), Input('teamB_dd', 'value')]
 )
 def update_radar_chart(selected_teamA, selected_teamB):
     teamA_data = df[df['team'] == selected_teamA]
@@ -117,6 +126,23 @@ def update_radar_chart(selected_teamA, selected_teamB):
         showlegend=False
     )
     return fig
+
+# Callback function for violin plots
+@app.callback(
+    Output('violin_plot', 'figure'),
+    [Input('teamA_dd', 'value'), Input('teamB_dd', 'value'), Input('attribute_checklist', 'value')]
+)
+def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
+    teamA_data = df[df['team'] == selected_teamA]
+    teamB_data = df[df['team'] == selected_teamB]
+
+    fig2 = go.Figure()
+    for attribute in selected_attributes:
+
+
+
+    return fig2
+
 
 # run the app
 if __name__ == '__main__':
