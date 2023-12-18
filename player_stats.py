@@ -143,7 +143,7 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
     teamA_data = df[df['team'] == selected_teamA]
     teamB_data = df[df['team'] == selected_teamB]
 
-    fig2 = make_subplots(rows=len(selected_attributes), cols=1, subplot_titles=selected_attributes)
+    fig2 = make_subplots(rows=1, cols=len(selected_attributes), subplot_titles=selected_attributes, shared_yaxes=True)
 
     for i, attribute in enumerate(selected_attributes, start=1):
         fig2.add_trace(go.Violin(
@@ -153,7 +153,7 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
             line_color='blue',
             name=f'Team A - {attribute}',
             marker_color='lightblue'
-        ), row=i, col=1)
+        ), row=1, col=i)
 
         fig2.add_trace(go.Violin(
             x=[selected_teamB] * len(teamB_data),
@@ -162,13 +162,14 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
             line_color='orange',
             name=f'Team B - {attribute}',
             marker_color='lightcoral'
-        ), row=i, col=1)
+        ), row=1, col=i)
 
     fig2.update_layout(
         title='Violin plots for selected attributes',
         xaxis=dict(title='Team'),
         yaxis=dict(title='Attribute Value'),
-        showlegend=True
+        showlegend=True,
+        width=len(selected_attributes) * 500
     )
 
     return fig2
