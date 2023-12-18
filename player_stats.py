@@ -7,6 +7,7 @@ import os
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 
 # read csv files into dataframes
 df1 = pd.read_csv('Dataset/player_shooting.csv')
@@ -68,9 +69,8 @@ app.layout = html.Div([
     html.Label('Select attributes for violin plots:'),
     dcc.Checklist(
         id='attribute_checklist',
-        options=[{'Label': attr, 'value': attr} for attr in categories],
-        value=categories
-    ),
+        options=[{'label': attr, 'value': attr} for attr in categories],
+                 ),
     dcc.Graph(id='violin_plot')
 ])
 
@@ -136,10 +136,33 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
     teamA_data = df[df['team'] == selected_teamA]
     teamB_data = df[df['team'] == selected_teamB]
 
-    fig2 = go.Figure()
+    fig2 = make_subplots(rows=len(selected_attributes), cols=1, subplot_titles=selected_attributes)
+
     for attribute in selected_attributes:
+        if not 'received_passes':
+            fig2.add_trace(go.Violin(
+                x=[selected_teamA] * len(teamA_data),
+                y=teamA_data[attribute],
+                box_visible=True,
+                line_color='blue',
+                name=f'Team A - {attribute}',
+                marker_color='lightblue'
+            ))
+            fig2.add_trace(go.Violin(
+                x=[selected_teamB] * len(teamB_data),
+                y=teamB_data[attribute],
+                box_visible=True,
+                line_color='orange',
+                name=f'Team B - {attribute}',
+                marker_color='lightcoral'
+            ))
 
-
+        fig2.update_layout(
+            title='Violin plots for selected  attributes',
+            xaxis=dict(title='Team'),
+            yaxis=dict(title='Attribute Value'),
+            showlegend=True
+        )
 
     return fig2
 
