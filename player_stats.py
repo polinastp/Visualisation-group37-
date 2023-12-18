@@ -110,12 +110,16 @@ def update_radar_chart(selected_teamA, selected_teamB):
         r=[avg_shotsA, avg_goalsA, avg_tacklesA, avg_blocksA, avg_touchesA, avg_rec_passesA, avg_passesA, avg_assistsA],
         theta=categories,
         fill='toself',
+        line_color='blue',
+        marker_color='lightblue',
         name='Team A'
     ))
     fig.add_trace(go.Scatterpolar(
         r=[avg_shotsB, avg_goalsB, avg_tacklesB, avg_blocksB, avg_touchesB, avg_rec_passesB, avg_passesB, avg_assistsB],
         theta=categories,
         fill='toself',
+        line_color='orange',
+        marker_color='lightcoral',
         name='Team B'
     ))
     fig.update_layout(
@@ -138,31 +142,31 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
 
     fig2 = make_subplots(rows=len(selected_attributes), cols=1, subplot_titles=selected_attributes)
 
-    for attribute in selected_attributes:
-        if not 'received_passes':
-            fig2.add_trace(go.Violin(
-                x=[selected_teamA] * len(teamA_data),
-                y=teamA_data[attribute],
-                box_visible=True,
-                line_color='blue',
-                name=f'Team A - {attribute}',
-                marker_color='lightblue'
-            ))
-            fig2.add_trace(go.Violin(
-                x=[selected_teamB] * len(teamB_data),
-                y=teamB_data[attribute],
-                box_visible=True,
-                line_color='orange',
-                name=f'Team B - {attribute}',
-                marker_color='lightcoral'
-            ))
+    for i, attribute in enumerate(selected_attributes, start=1):
+        fig2.add_trace(go.Violin(
+            x=[selected_teamA] * len(teamA_data),
+            y=teamA_data[attribute],
+            box_visible=True,
+            line_color='blue',
+            name=f'Team A - {attribute}',
+            marker_color='lightblue'
+        ), row=i, col=1)
 
-        fig2.update_layout(
-            title='Violin plots for selected  attributes',
-            xaxis=dict(title='Team'),
-            yaxis=dict(title='Attribute Value'),
-            showlegend=True
-        )
+        fig2.add_trace(go.Violin(
+            x=[selected_teamB] * len(teamB_data),
+            y=teamB_data[attribute],
+            box_visible=True,
+            line_color='orange',
+            name=f'Team B - {attribute}',
+            marker_color='lightcoral'
+        ), row=i, col=1)
+
+    fig2.update_layout(
+        title='Violin plots for selected attributes',
+        xaxis=dict(title='Team'),
+        yaxis=dict(title='Attribute Value'),
+        showlegend=True
+    )
 
     return fig2
 
