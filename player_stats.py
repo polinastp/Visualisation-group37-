@@ -81,8 +81,8 @@ app.layout = html.Div([
     [Input('teamA_dd', 'value'), Input('teamB_dd', 'value')]
 )
 def update_radar_chart(selected_teamA, selected_teamB):
-    teamA_data = df[df['team'] == selected_teamA]
-    teamB_data = df[df['team'] == selected_teamB]
+    teamA_data = df_st[df_st['team'] == selected_teamA]
+    teamB_data = df_st[df_st['team'] == selected_teamB]
 
     # team A  mean statistics  
     avg_passesA = teamA_data['passes'].mean()
