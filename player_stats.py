@@ -28,16 +28,17 @@ merged_df = pd.merge(merged_df, df4[cols_df4], on='player', how='right')
 
 # cleaning of the dataframe from null values by filling in with 0 
 df = merged_df.fillna(0)
+df_st = df.copy()
 
 # 
-df['shots']=(df['shots']-df['shots'].min())/(df['shots'].max()-df['shots'].min())
-df['passes']=(df['passes']-df['passes'].min())/(df['passes'].max()-df['passes'].min())
-df['goals']=(df['goals']-df['goals'].min())/(df['goals'].max()-df['goals'].min())
-df['tackles']=(df['tackles']-df['tackles'].min())/(df['tackles'].max()-df['tackles'].min())
-df['touches']=(df['touches']-df['touches'].min())/(df['touches'].max()-df['touches'].min())
-df['passes_received']=(df['passes_received']-df['passes_received'].min())/(df['passes_received'].max()-df['passes_received'].min())
-df['blocks']=(df['blocks']-df['blocks'].min())/(df['blocks'].max()-df['blocks'].min())
-df['assists']=(df['assists']-df['assists'].min())/(df['assists'].max()-df['assists'].min())
+df_st['shots']=(df_st['shots']-df_st['shots'].min())/(df_st['shots'].max()-df_st['shots'].min())
+df_st['passes']=(df_st['passes']-df_st['passes'].min())/(df_st['passes'].max()-df_st['passes'].min())
+df_st['goals']=(df_st['goals']-df_st['goals'].min())/(df_st['goals'].max()-df_st['goals'].min())
+df_st['tackles']=(df_st['tackles']-df_st['tackles'].min())/(df_st['tackles'].max()-df_st['tackles'].min())
+df_st['touches']=(df_st['touches']-df_st['touches'].min())/(df_st['touches'].max()-df_st['touches'].min())
+df_st['passes_received']=(df_st['passes_received']-df_st['passes_received'].min())/(df_st['passes_received'].max()-df_st['passes_received'].min())
+df_st['blocks']=(df_st['blocks']-df_st['blocks'].min())/(df_st['blocks'].max()-df_st['blocks'].min())
+df_st['assists']=(df_st['assists']-df_st['assists'].min())/(df_st['assists'].max()-df_st['assists'].min())
 
 # initialising the app 
 app = dash.Dash(__name__)
