@@ -144,7 +144,7 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
     teamA_data = df[df['team'] == selected_teamA]
     teamB_data = df[df['team'] == selected_teamB]
 
-    fig2 = make_subplots(rows=1, cols=len(selected_attributes), subplot_titles=selected_attributes, shared_yaxes=True)
+    fig2 = make_subplots(rows=1, cols=len(selected_attributes), subplot_titles=selected_attributes)
 
     for i, attribute in enumerate(selected_attributes, start=1):
         fig2.add_trace(go.Violin(
