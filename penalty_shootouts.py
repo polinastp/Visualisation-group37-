@@ -4,10 +4,14 @@ from dash.dependencies import Input, Output
 import base64
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
+import matplotlib.pyplot as plt
 
 df = pd.read_csv('Dataset/WorldCupShootouts.csv')
 df = df.dropna()
-
+df_vis2 = df.copy()
+df_vis2['Number of goals'] = 1
 shot_coords = {
     1: [216, 250],
     2: [448, 250],
@@ -64,16 +68,14 @@ fig.update_layout(xaxis_showgrid=False,
                       sizing='stretch',
                       layer="below")])
 
-
-
-
 #Creating Dashboard
 app = dash.Dash(__name__)
 app.layout = html.Div([
     dcc.Graph(id="myfig", figure=fig),
     dcc.Dropdown(id='mydropdown',
                  options=[{'label': team, 'value': team} for team in df['Team'].unique()],
-                 value='FRA')
+                 value='FRA'),
+    dcc.Graph(id="bar_chart"),
 ])
 
 
@@ -111,6 +113,16 @@ def update_plot(selected_team):
 
     return updated_fig
 
+@app.callback(
+    Output('bar_chart', 'figure'),
+    [Input('mydropdown', 'value')])
+def update_bar_chart(selected_team):
+    team_data = df_vis2[df_vis2['Team'] == selected_team]
+    df_bar = pd.DataFrame(team_data.groupby('Zone')['Number of goals'].sum().reset_index())
+
+    fig2 = px.bar(df_bar, x='Zone', y='Number of goals')
+
+    return fig2
 
 if __name__ == '__main__':
     app.run_server(debug=False)
