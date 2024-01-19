@@ -45,16 +45,16 @@ df_zone1.rename(columns = {0:'Number of OffShots'}, inplace= True)
 # df_zone = pd.merge(df_zone, df_zone1[['Zone', 'Number of OffShots']], on="Zone")
 
 # Figure for On target Shots
-fig = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored', hover_data=['Number of Shots Scored'],
+fig1 = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored', hover_data=['Number of Shots Scored'],
                  range_x=(0, 900), range_y=(750, 0),
                  labels={'Zone_x': '', 'Zone_y': ''},
                  title='Goals Made Per Zone', color_continuous_scale='reds')
 
-fig.update_traces(marker={'size': 45})
+fig1.update_traces(marker={'size': 45})
 
 image_filename = "Image/goal.png"
 plotly_logo = base64.b64encode(open(image_filename, 'rb').read())
-fig.update_layout(xaxis_showgrid=False,
+fig1.update_layout(xaxis_showgrid=False,
                   yaxis_showgrid=False,
                   xaxis_showticklabels=False,
                   yaxis_showticklabels=False,
@@ -71,7 +71,7 @@ fig.update_layout(xaxis_showgrid=False,
 #Creating Dashboard
 app = dash.Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id="myfig", figure=fig),
+    dcc.Graph(id="myfig", figure=fig1),
     dcc.Dropdown(id='mydropdown',
                  options=[{'label': team, 'value': team} for team in df['Team'].unique()],
                  value='FRA'),

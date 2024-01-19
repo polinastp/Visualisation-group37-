@@ -8,6 +8,15 @@ from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
+import dash
+from dash import dcc, html
+from dash.dependencies import Input, Output
+import base64
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
+import matplotlib.pyplot as plt
 
 # read csv files into dataframes
 df1 = pd.read_csv('Dataset/player_shooting.csv')
@@ -40,6 +49,67 @@ df_st['passes_received']=(df_st['passes_received']-df_st['passes_received'].min(
 df_st['blocks']=(df_st['blocks']-df_st['blocks'].min())/(df_st['blocks'].max()-df_st['blocks'].min())
 df_st['assists']=(df_st['assists']-df_st['assists'].min())/(df_st['assists'].max()-df_st['assists'].min())
 
+
+df_x = pd.read_csv('Dataset/WorldCupShootouts.csv')
+df_x = df_x.dropna()
+df_vis2 = df_x.copy()
+df_vis2['Number of goals'] = 1
+shot_coords = {
+    1: [216, 250],
+    2: [448, 250],
+    3: [680, 250],
+    4: [216, 450],
+    5: [448, 450],
+    6: [680, 450],
+    7: [216, 690],
+    8: [448, 690],
+    9: [680, 690]
+}
+
+#Df for OnTarget Shots for every zone (Goals)
+df_target = df_x[df_x.OnTarget == 1]
+df_target['Zone_x'] = df_target['Zone'].apply(lambda x: shot_coords[int(x)][0])
+df_target['Zone_y'] = df_target['Zone'].apply(lambda x: shot_coords[int(x)][1])
+
+df_zone = pd.DataFrame(df_target.groupby(['Zone', 'Zone_x', 'Zone_y']).size()).reset_index()
+df_zone.rename(columns={0: 'Number of Shots Scored'}, inplace=True)
+
+#Df for OffTarget shots for every zone (Shots that didnt result in a goal)
+df_Offtarget = df_x[df_x.OnTarget == 0]
+df_Offtarget['Zone_x'] = df_Offtarget['Zone'].apply(lambda x: shot_coords[int(x)][0])
+df_Offtarget['Zone_y'] = df_Offtarget['Zone'].apply(lambda x: shot_coords[int(x)][1])
+
+df_zone1 = pd.DataFrame(df_Offtarget.groupby(['Zone','Zone_x', 'Zone_y']).size()).reset_index()
+df_zone1.rename(columns = {0:'Number of OffShots'}, inplace= True)
+
+#Merging the columns with number of Shots made versus number of shots missed on df_zone
+#THE df_zone1 has no values for zone 5 and 8 because all the shots made in that zone was successful and thus there is no data for the unsuccessful shots for that particular zone
+# df_zone = pd.merge(df_zone, df_zone1[['Zone', 'Number of OffShots']], on="Zone")
+
+# Figure for On target Shots
+fig1 = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored', hover_data=['Number of Shots Scored'],
+                 range_x=(0, 900), range_y=(750, 0),
+                 labels={'Zone_x': '', 'Zone_y': ''},
+                 title='Goals Made Per Zone', color_continuous_scale='reds')
+
+fig1.update_traces(marker={'size': 45})
+
+image_filename = "Image/goal.png"
+plotly_logo = base64.b64encode(open(image_filename, 'rb').read())
+fig1.update_layout(xaxis_showgrid=False,
+                  yaxis_showgrid=False,
+                  xaxis_showticklabels=False,
+                  yaxis_showticklabels=False,
+                  images=[dict(
+                      source='data:image/png;base64,{}'.format(plotly_logo.decode()),
+                      xref="paper", yref="paper",
+                      x=0, y=1,
+                      sizex=1, sizey=1.5,
+                      xanchor="left",
+                      yanchor="top",
+                      sizing='stretch',
+                      layer="below")])
+
 # initialising the app 
 app = dash.Dash(__name__)
 
@@ -57,7 +127,7 @@ fig.update_layout(
     showlegend=False
 )
 
-app.layout = html.Div([
+app.layout = html.Div([html.Div([
     dcc.Graph(id='spider', figure=fig),
     html.Label('Team A:', style={'font-weight': 'bold'}),
     dcc.Dropdown(id='teamA_dd',
@@ -72,8 +142,15 @@ app.layout = html.Div([
         id='attribute_checklist',
         options=[{'label': attr, 'value': attr} for attr in categories],
                  ),
-    dcc.Graph(id='violin_plot')
+    dcc.Graph(id='violin_plot'),
+    dcc.Graph(id="myfig", figure=fig),
+    dcc.Dropdown(id='mydropdown',
+                 options=[{'label': team, 'value': team} for team in df_x['Team'].unique()],
+                 value='FRA'),
+    dcc.Graph(id="bar_chart"),
 ])
+])
+
 
 # Callback function for spider plots
 @app.callback(
@@ -172,6 +249,51 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
         showlegend=True,
         width=len(selected_attributes) * 500
     )
+
+    return fig2
+
+@app.callback(Output("myfig", 'figure'),
+              [Input('mydropdown', 'value')])
+def update_plot(selected_team):
+    filtered_df = df_x[df_x['Team'] == selected_team]
+    df_target = filtered_df[filtered_df.OnTarget == 1]
+    df_target['Zone_x'] = df_target['Zone'].apply(lambda x: shot_coords[int(x)][0])
+    df_target['Zone_y'] = df_target['Zone'].apply(lambda x: shot_coords[int(x)][1])
+
+    df_zone = pd.DataFrame(df_target.groupby(['Zone', 'Zone_x', 'Zone_y']).size()).reset_index()
+    df_zone.rename(columns={0: 'Number of Shots Scored'}, inplace=True)
+
+    updated_fig = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored',
+                             hover_data=['Number of Shots Scored'],
+                             range_x=(0, 900), range_y=(750, 0),
+                             labels={'Zone_x': '', 'Zone_y': ''},
+                             title=f'Goals Made per Zone By - {selected_team}', color_continuous_scale='reds')
+
+    updated_fig.update_traces(marker={'size': 45})
+    updated_fig.update_layout(xaxis_showgrid=False,
+                              yaxis_showgrid=False,
+                              xaxis_showticklabels=False,
+                              yaxis_showticklabels=False,
+                              images=[dict(
+                                  source='data:image/png;base64,{}'.format(plotly_logo.decode()),
+                                  xref="paper", yref="paper",
+                                  x=0, y=1,
+                                  sizex=1, sizey=1.5,
+                                  xanchor="left",
+                                  yanchor="top",
+                                  sizing='stretch',
+                                  layer="below")])
+
+    return updated_fig
+
+@app.callback(
+    Output('bar_chart', 'figure'),
+    [Input('mydropdown', 'value')])
+def update_bar_chart(selected_team):
+    team_data = df_vis2[df_vis2['Team'] == selected_team]
+    df_bar = pd.DataFrame(team_data.groupby('Zone')['Number of goals'].sum().reset_index())
+
+    fig2 = px.bar(df_bar, x='Zone', y='Number of goals')
 
     return fig2
 
