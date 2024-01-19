@@ -58,5 +58,5 @@ if __name__ == '__main__':
         return scatterplot2.update(selected_color, selected_data)
 
 
-    app.run_server(debug=False, dev_tools_ui=False)
+    app.run_server(debug=True, dev_tools_ui=False)
 

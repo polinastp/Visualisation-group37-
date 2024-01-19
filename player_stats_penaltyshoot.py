@@ -128,6 +128,9 @@ fig.update_layout(
 )
 
 app.layout = html.Div([html.Div([
+    html.H5("Visualization Project Group 37", style={"fontSize": 20}),
+    html.Div(id="intro", children="This Dashboard helps coaches and players of the upcoming World Cup 2026."),
+    html.Hr(style={'margin-top': '5px', 'margin-bottom': '15px'}),  # Add a horizontal line
     dcc.Graph(id='spider', figure=fig),
     html.Label('Team A:', style={'font-weight': 'bold'}),
     dcc.Dropdown(id='teamA_dd',
@@ -154,7 +157,7 @@ app.layout = html.Div([html.Div([
 
 # Callback function for spider plots
 @app.callback(
-    Output('spider', 'figure'),
+    Output('spider', 'figure'), #Output('titel', 'value'),
     [Input('teamA_dd', 'value'), Input('teamB_dd', 'value')]
 )
 def update_radar_chart(selected_teamA, selected_teamB):
@@ -204,9 +207,18 @@ def update_radar_chart(selected_teamA, selected_teamB):
         polar=dict(
             radialaxis=dict(
                 visible=True
-            )),
-        showlegend=False
+            )
+        ),
+        title=dict(
+            text='Radar Chart for comparison of different attributes amongst two teams',
+            font=dict(
+                size=14,  # Adjust the size as needed
+                color='black',
+            )
+        ),
+        showlegend=False,
     )
+
     return fig
 
 # Callback function for violin plots
@@ -300,4 +312,4 @@ def update_bar_chart(selected_team):
 
 # run the app
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
