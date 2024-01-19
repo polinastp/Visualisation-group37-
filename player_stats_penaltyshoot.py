@@ -131,21 +131,24 @@ app.layout = html.Div([html.Div([
     html.H5("Visualization Project Group 37", style={"fontSize": 20}),
     html.Div(id="intro", children="This Dashboard helps coaches and players of the upcoming World Cup 2026."),
     html.Hr(style={'margin-top': '5px', 'margin-bottom': '15px'}),  # Add a horizontal line
-    dcc.Graph(id='spider', figure=fig),
-    html.Label('Team A:', style={'font-weight': 'bold'}),
-    dcc.Dropdown(id='teamA_dd',
-                 options=[{'label': team, 'value': team} for team in df['team'].unique()],
-                 ),
-    html.Label('Team B:', style={'font-weight': 'bold'}),
-    dcc.Dropdown(id='teamB_dd',
-                 options=[{'label': team, 'value': team} for team in df['team'].unique()],
-                 ),
-    html.Label('Select attributes for violin plots:', style={'font-weight': 'bold'}),
-    dcc.Checklist(
-        id='attribute_checklist',
-        options=[{'label': attr, 'value': attr} for attr in categories],
-                 ),
-    dcc.Graph(id='violin_plot'),
+    html.Div([
+        html.P("Select here two teams for comparison", style={'font-weight': 'bold'}),
+        dcc.Dropdown(id='teamA_dd',
+                     options=[{'label': team, 'value': team} for team in df['team'].unique()],
+                     ),
+        dcc.Dropdown(id='teamB_dd',
+                     options=[{'label': team, 'value': team} for team in df['team'].unique()],
+                     ),
+    ], style={'width': '20%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
+    dcc.Graph(id='spider', figure=fig, style={'width': '80%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
+
+    html.Div([
+        html.P("Select here the attributes for comparison", style={'font-weight': 'bold'}),
+        dcc.Checklist(id='attribute_checklist',
+                      options=[{'label': attr, 'value': attr} for attr in categories]
+                      ),
+    ], style={'width': '20%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
+    dcc.Graph(id='violin_plot', figure=fig, style={'width': '80%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
     dcc.Graph(id="myfig", figure=fig),
     dcc.Dropdown(id='mydropdown',
                  options=[{'label': team, 'value': team} for team in df_x['Team'].unique()],
@@ -212,9 +215,10 @@ def update_radar_chart(selected_teamA, selected_teamB):
         title=dict(
             text='Radar Chart for comparison of different attributes amongst two teams',
             font=dict(
-                size=14,  # Adjust the size as needed
+                size=18,
                 color='black',
-            )
+            ),
+            x=0.5,
         ),
         showlegend=False,
     )
@@ -228,7 +232,20 @@ def update_radar_chart(selected_teamA, selected_teamB):
 )
 def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
     if not selected_attributes:
-        return make_subplots(rows=1, cols=1)
+        empty_fig = make_subplots(rows=1, cols=1)
+        empty_fig.update_layout(
+            title=dict(
+                text='Violin plots of selected attributes',
+                font=dict(
+                    size=18,
+                    color='black',
+                ),
+                x=0.5,
+            ),
+            yaxis=dict(title='Attribute Value'),
+            showlegend=False,
+        )
+        return empty_fig
 
     teamA_data = df[df['team'] == selected_teamA]
     teamB_data = df[df['team'] == selected_teamB]
@@ -255,10 +272,16 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
         ), row=1, col=i)
 
     fig2.update_layout(
-        title='Violin plots for selected attributes',
-        xaxis=dict(title='Team'),
+        title=dict(
+            text='Violin plots of selected attributes',
+            font=dict(
+                size=18,
+                color='black',
+            ),
+            x=0.5,
+        ),
         yaxis=dict(title='Attribute Value'),
-        showlegend=True,
+        showlegend=False,
         width=len(selected_attributes) * 500
     )
 
