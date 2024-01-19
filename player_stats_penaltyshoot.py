@@ -132,7 +132,7 @@ app.layout = html.Div([html.Div([
     html.Div(id="intro", children="This Dashboard helps coaches and players of the upcoming World Cup 2026."),
     html.Hr(style={'margin-top': '5px', 'margin-bottom': '15px'}),  # Add a horizontal line
     html.Div([
-        html.P("Select here two teams for comparison", style={'font-weight': 'bold'}),
+        html.P("Select two teams for comparison", style={'font-weight': 'bold'}),
         dcc.Dropdown(id='teamA_dd',
                      options=[{'label': team, 'value': team} for team in df['team'].unique()],
                      ),
@@ -143,17 +143,21 @@ app.layout = html.Div([html.Div([
     dcc.Graph(id='spider', figure=fig, style={'width': '80%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
 
     html.Div([
-        html.P("Select here the attributes for comparison", style={'font-weight': 'bold'}),
+        html.P("Select the attributes for comparison", style={'font-weight': 'bold'}),
         dcc.Checklist(id='attribute_checklist',
                       options=[{'label': attr, 'value': attr} for attr in categories]
                       ),
     ], style={'width': '20%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
     dcc.Graph(id='violin_plot', figure=fig, style={'width': '80%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
-    dcc.Graph(id="myfig", figure=fig),
-    dcc.Dropdown(id='mydropdown',
+    html.Div([
+        html.P("Select the team", style={'font-weight': 'bold'}),
+        dcc.Dropdown(id='mydropdown',
                  options=[{'label': team, 'value': team} for team in df_x['Team'].unique()],
                  value='FRA'),
-    dcc.Graph(id="bar_chart"),
+    ], style={'width': '20%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
+    dcc.Graph(id="myfig", figure=fig, style={'width': '80%', 'display': 'inline-block', 'verticalAlign': 'middle'}),
+    html.Div(style={'width': '20%', 'display': 'inline-block'}),
+    dcc.Graph(id="bar_chart", style={'width': '80%', 'display': 'inline-block'}),
 ])
 ])
 
@@ -309,6 +313,14 @@ def update_plot(selected_team):
                               yaxis_showgrid=False,
                               xaxis_showticklabels=False,
                               yaxis_showticklabels=False,
+                              title=dict(
+                                  text=f'Goals Made per Zone By - {selected_team}',
+                                  font=dict(
+                                      size=18,
+                                      color='black',
+                                  ),
+                                  x=0.5
+                              ),
                               images=[dict(
                                   source='data:image/png;base64,{}'.format(plotly_logo.decode()),
                                   xref="paper", yref="paper",
@@ -329,6 +341,16 @@ def update_bar_chart(selected_team):
     df_bar = pd.DataFrame(team_data.groupby('Zone')['Number of goals'].sum().reset_index())
 
     fig2 = px.bar(df_bar, x='Zone', y='Number of goals')
+
+    fig2.update_layout(
+        title=dict(
+            text=f'Bar Chart of Number of goals per zone by - {selected_team}',
+            font=dict(
+                size=18,
+                color='black',
+            ),
+            x=0.5
+        ))
 
     return fig2
 
