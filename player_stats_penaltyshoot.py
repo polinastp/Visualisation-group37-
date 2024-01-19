@@ -200,7 +200,7 @@ def update_radar_chart(selected_teamA, selected_teamB):
         fill='toself',
         line_color='blue',
         marker_color='lightblue',
-        name='Team A'
+        name=f'{selected_teamA}'
     ))
     fig.add_trace(go.Scatterpolar(
         r=[avg_shotsB, avg_goalsB, avg_tacklesB, avg_blocksB, avg_touchesB, avg_rec_passesB, avg_passesB, avg_assistsB],
@@ -208,7 +208,7 @@ def update_radar_chart(selected_teamA, selected_teamB):
         fill='toself',
         line_color='orange',
         marker_color='lightcoral',
-        name='Team B'
+        name=f'{selected_teamB}'
     ))
     fig.update_layout(
         polar=dict(
@@ -224,7 +224,7 @@ def update_radar_chart(selected_teamA, selected_teamB):
             ),
             x=0.5,
         ),
-        showlegend=False,
+        showlegend=True,
     )
 
     return fig
