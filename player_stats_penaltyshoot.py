@@ -1,3 +1,12 @@
+import dash
+from dash import dcc, html, Dash
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+from dash.dependencies import Input, Output
+import plotly.graph_objects as go
+import plotly.express as px
 from plotly.subplots import make_subplots
 import dash
 from dash import dcc, html
@@ -345,7 +354,6 @@ def update_bar_chart(selected_team):
 
     return fig2
 
-
 # run the app
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
