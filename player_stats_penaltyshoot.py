@@ -85,7 +85,7 @@ df_zone1.rename(columns = {0:'Number of OffShots'}, inplace= True)
 #Merging the columns with number of Shots made versus number of shots missed on df_zone
 #THE df_zone1 has no values for zone 5 and 8 because all the shots made in that zone was successful and thus there is no data for the unsuccessful shots for that particular zone
 # df_zone = pd.merge(df_zone, df_zone1[['Zone', 'Number of OffShots']], on="Zone")
-
+df_zone['Zone'] = df_zone['Zone'].astype(str)
 # Figure for On target Shots
 fig1 = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored', hover_data=['Number of Shots Scored'],
                  range_x=(0, 900), range_y=(750, 0),
@@ -93,8 +93,9 @@ fig1 = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored
                  title='Goals Made Per Zone', color_continuous_scale='reds')
 
 fig1.update_traces(marker={'size': 45})
+fig1.update_traces(text=df_zone['Zone'], textposition='top center')
 
-image_filename = "Image/goal.png"
+image_filename = "Image/goal 2.png"
 plotly_logo = base64.b64encode(open(image_filename, 'rb').read())
 fig1.update_layout(xaxis_showgrid=False,
                   yaxis_showgrid=False,
@@ -291,8 +292,7 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
 
     return fig2
 
-@app.callback(Output("myfig", 'figure'),
-              [Input('mydropdown', 'value')])
+@app.callback(Output("myfig", 'figure'), [Input('mydropdown', 'value')])
 def update_plot(selected_team):
     filtered_df = df_x[df_x['Team'] == selected_team]
     df_target = filtered_df[filtered_df.OnTarget == 1]
@@ -301,6 +301,7 @@ def update_plot(selected_team):
 
     df_zone = pd.DataFrame(df_target.groupby(['Zone', 'Zone_x', 'Zone_y']).size()).reset_index()
     df_zone.rename(columns={0: 'Number of Shots Scored'}, inplace=True)
+    df_zone['Zone'] = df_zone['Zone'].astype(str)
 
     updated_fig = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored',
                              hover_data=['Number of Shots Scored'],
@@ -309,6 +310,7 @@ def update_plot(selected_team):
                              title=f'Goals Made per Zone By - {selected_team}', color_continuous_scale='reds')
 
     updated_fig.update_traces(marker={'size': 45})
+    updated_fig.update_traces(text=df_zone['Zone'], textposition='top center')  # Update to add zone labels
     updated_fig.update_layout(xaxis_showgrid=False,
                               yaxis_showgrid=False,
                               xaxis_showticklabels=False,
