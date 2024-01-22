@@ -1,12 +1,3 @@
-import dash
-from dash import dcc, html, Dash
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-from dash.dependencies import Input, Output
-import plotly.graph_objects as go
-import plotly.express as px
 from plotly.subplots import make_subplots
 import dash
 from dash import dcc, html
