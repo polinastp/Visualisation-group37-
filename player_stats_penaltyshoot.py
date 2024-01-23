@@ -357,6 +357,7 @@ def update_bar_chart(selected_team):
         barmode='stack'
     )
 
+    fig2.update_xaxes(range=(0.5, 9.5))
     return fig2
 
 
