@@ -81,7 +81,7 @@ df_zone1.rename(columns = {0:'Number of OffShots'}, inplace= True)
 # df_zone = pd.merge(df_zone, df_zone1[['Zone', 'Number of OffShots']], on="Zone")
 df_zone['Zone'] = df_zone['Zone'].astype(str)
 # Figure for On target Shots
-fig1 = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored', hover_data=['Number of Shots Scored'],
+fig1 = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored', hover_data=['Zone', 'Number of Shots Scored'],
                  range_x=(0, 900), range_y=(750, 0),
                  labels={'Zone_x': '', 'Zone_y': ''},
                  title='Goals Made Per Zone', color_continuous_scale='reds')
@@ -212,7 +212,7 @@ def update_radar_chart(selected_teamA, selected_teamB):
             )
         ),
         title=dict(
-            text='Radar Chart for comparison of different attributes amongst two teams',
+            text='Radar Chart for Comparison of Different Attributes Amongst Two Teams',
             font=dict(
                 size=18,
                 color='black',
@@ -234,7 +234,7 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
         empty_fig = make_subplots(rows=1, cols=1)
         empty_fig.update_layout(
             title=dict(
-                text='Violin plots of selected attributes',
+                text='Violin Plots of Selected Attributes',
                 font=dict(
                     size=18,
                     color='black',
@@ -272,7 +272,7 @@ def update_violin_plot(selected_teamA, selected_teamB, selected_attributes):
 
     fig2.update_layout(
         title=dict(
-            text='Violin plots of selected attributes',
+            text='Violin Plots of Selected Attributes',
             font=dict(
                 size=18,
                 color='black',
@@ -298,10 +298,10 @@ def update_plot(selected_team):
     df_zone['Zone'] = df_zone['Zone'].astype(str)
 
     updated_fig = px.scatter(df_zone, x='Zone_x', y='Zone_y', color='Number of Shots Scored',
-                             hover_data=['Number of Shots Scored'],
+                             hover_data=['Zone', 'Number of Shots Scored'],
                              range_x=(0, 900), range_y=(750, 0),
                              labels={'Zone_x': '', 'Zone_y': ''},
-                             title=f'Goals Made per Zone By - {selected_team}', color_continuous_scale='reds')
+                             title=f'Successful Number of Shots Per Zone By - {selected_team}', color_continuous_scale='reds')
 
     updated_fig.update_traces(marker={'size': 45})
     updated_fig.update_traces(text=df_zone['Zone'], textposition='top center')  # Update to add zone labels
@@ -339,8 +339,10 @@ def update_bar_chart(selected_team):
     fig2 = px.bar(df_bar, x='Zone', y='Number of goals')
 
     fig2.update_layout(
+        yaxis=dict(
+            title='Number of Shots'),
         title=dict(
-            text=f'Bar Chart of Number of goals per zone by - {selected_team}',
+            text=f'Bar Chart of Successful and Unsuccessful Number of Shots Per Zone By - {selected_team}',
             font=dict(
                 size=18,
                 color='black',
@@ -353,4 +355,4 @@ def update_bar_chart(selected_team):
 
 # run the app
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
