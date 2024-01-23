@@ -329,13 +329,14 @@ def update_plot(selected_team):
 
     return updated_fig
 
+# df_target = df_x[df_x.OnTarget == 1]
 @app.callback(
     Output('bar_chart', 'figure'),
     [Input('mydropdown', 'value')])
 def update_bar_chart(selected_team):
     team_data = df_vis2[df_vis2['Team'] == selected_team]
-    df_bar_1 = pd.DataFrame(team_data[team_data['Goal'] == 1].groupby('Zone')['Number of goals'].sum().reset_index())
-    df_bar_0 = pd.DataFrame(team_data[team_data['Goal'] == 0].groupby('Zone')['Number of goals'].sum().reset_index())
+    df_bar_1 = team_data[team_data.OnTarget == 1].groupby('Zone')['Number of goals'].sum().reset_index()
+    df_bar_0 = team_data[team_data.OnTarget == 0].groupby('Zone')['Number of goals'].sum().reset_index()
 
     fig2 = go.Figure(data=[
         go.Bar(name='Succesful', x=df_bar_1['Zone'], y=df_bar_1['Number of goals'], marker_color='purple'),
